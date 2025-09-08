@@ -8,9 +8,12 @@ export async function middleware(request: NextRequest) {
   if (!token && pathname !== "/login" && pathname !== "/register") {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/library", request.url));
+  }
   try {
     return NextResponse.next();
-    
   } catch (error) {
     console.error("Token verification failed:", error);
     const response = NextResponse.redirect(new URL("/login", request.url));

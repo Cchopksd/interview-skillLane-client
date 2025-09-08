@@ -1,5 +1,5 @@
 "use server";
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.API_URL
 
 export async function apiFetch(path: string, options?: RequestInit) {
   const url = `${baseUrl}${path}`;
@@ -8,6 +8,7 @@ export async function apiFetch(path: string, options?: RequestInit) {
 
   const res = await fetch(url, {
     ...options,
+    cache: "no-store",
     headers: {
       ...(options?.headers || {}),
       ...(isFormData ? {} : { "Content-Type": "application/json" }),

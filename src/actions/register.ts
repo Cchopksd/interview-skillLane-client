@@ -1,5 +1,4 @@
 "use server";
-import { cookies } from "next/headers";
 import { apiFetch } from "@/lib/api";
 
 export async function RegisterAction({

@@ -1,3 +1,4 @@
+"use server";
 import { getBookById, getUserBorrowHistoryForBook } from "@/actions/books";
 import BookDetail from "@/components/books/BookDetail";
 import { notFound } from "next/navigation";
@@ -20,12 +21,16 @@ export default async function BookPage({ params }: BookPageProps) {
       userBorrowed,
     ]);
 
-
     if (!bookData) {
       notFound();
     }
 
-    return <BookDetail book={bookData} userBorrowed={userBorrowedData} />;
+    return (
+      <BookDetail
+        book={bookData}
+        userBorrowed={userBorrowedData}
+      />
+    );
   } catch (error) {
     console.error("Error fetching book:", error);
     notFound();

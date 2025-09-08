@@ -1,3 +1,4 @@
+
 import BookForm from "@/components/books/BookForm";
 
 interface BookEditPageProps {
@@ -6,6 +7,6 @@ interface BookEditPageProps {
   };
 }
 
-export default function BookEditPage({ params }: BookEditPageProps) {
+export default  function BookEditPage({ params }: BookEditPageProps) {
   return <BookForm bookId={params.id} />;
 }
