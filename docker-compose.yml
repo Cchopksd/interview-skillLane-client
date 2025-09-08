@@ -1,0 +1,13 @@
+services:
+  client:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - skilllane_network
+
+networks:
+  skilllane_network:
+    driver: bridge
