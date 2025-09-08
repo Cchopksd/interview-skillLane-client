@@ -79,7 +79,7 @@ export default function LibraryClient({
         <div className="flex items-center gap-2">
           <Link
             href="/library/create"
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             Add Book

@@ -83,7 +83,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
               <div className="mb-4">
                 <button
                   onClick={() => router.push(`/library/${book.id}/edit`)}
-                  className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Edit className="w-4 h-4" />
                   Edit Book Details
@@ -95,7 +95,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
                   <button
                     onClick={handleAction}
                     disabled={loading}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {loading ? "Returning..." : "Return Book"}
                   </button>
@@ -103,14 +103,14 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
                   <button
                     onClick={handleAction}
                     disabled={loading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {loading ? "Borrowing..." : "Borrow Book"}
                   </button>
                 ) : (
                   <button
                     onClick={handleReserve}
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                    className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer"
                   >
                     All books are borrowed
                   </button>

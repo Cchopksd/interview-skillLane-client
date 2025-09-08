@@ -106,7 +106,7 @@ export default function AuthForm({
         type="submit"
         aria-required={fields.some((f) => f.required)}
         disabled={loading}
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60"
+        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 cursor-pointer"
       >
         {loading ? "Processing..." : submitLabel}
       </button>
