@@ -6,7 +6,7 @@ import { createBook, updateBook, getBookById } from "@/actions/books";
 import { useRouter } from "next/navigation";
 
 interface BookFormProps {
-  bookId?: string; // If provided, it's edit mode. If not, it's create mode
+  bookId?: string;
 }
 
 export default function BookForm({ bookId }: BookFormProps) {
@@ -27,7 +27,6 @@ export default function BookForm({ bookId }: BookFormProps) {
     totalQuantity: 1,
   });
 
-  // Load existing book data for edit mode
   useEffect(() => {
     if (isEditMode && bookId) {
       const loadBook = async () => {
@@ -71,7 +70,6 @@ export default function BookForm({ bookId }: BookFormProps) {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      // Only allow one image
       if (files.length > 1) {
         setMessage("Please select only one image");
         return;
@@ -79,13 +77,11 @@ export default function BookForm({ bookId }: BookFormProps) {
 
       const file = files[0];
 
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         setMessage("Please select a valid image file");
         return;
       }
 
-      // Validate file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
         setMessage("Image size must be less than 10MB");
         return;
@@ -98,7 +94,6 @@ export default function BookForm({ bookId }: BookFormProps) {
       };
       reader.readAsDataURL(file);
 
-      // Clear any previous error messages
       setMessage("");
     }
   };
@@ -114,7 +109,6 @@ export default function BookForm({ bookId }: BookFormProps) {
     setMessage("");
 
     try {
-      // Validate required fields
       if (!formData.title.trim()) {
         setMessage("Title is required");
         return;
@@ -139,7 +133,6 @@ export default function BookForm({ bookId }: BookFormProps) {
         return;
       }
 
-      // Create a default file if no new image is selected
       const imageFile =
         coverImage || new File([], "placeholder.jpg", { type: "image/jpeg" });
 
@@ -151,7 +144,7 @@ export default function BookForm({ bookId }: BookFormProps) {
         ISBN: formData.ISBN.trim(),
         publicationYear: formData.publicationYear,
         totalQuantity: formData.totalQuantity,
-        availableQuantity: formData.totalQuantity, // This will be handled by the server
+        availableQuantity: formData.totalQuantity,
         createdAt: new Date(),
         updatedAt: new Date(),
         coverImage: {
@@ -190,12 +183,10 @@ export default function BookForm({ bookId }: BookFormProps) {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {/* Header */}
       <div className="mb-6">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors hover:cursor-pointer"
-        >
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors hover:cursor-pointer">
           <ArrowLeft className="w-5 h-5" />
           <span>Back to {isEditMode ? "Book Details" : "Library"}</span>
         </button>
@@ -204,10 +195,10 @@ export default function BookForm({ bookId }: BookFormProps) {
         </h1>
       </div>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6">
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          {/* Basic Information */}
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Basic Information
           </h2>
@@ -305,7 +296,6 @@ export default function BookForm({ bookId }: BookFormProps) {
           </div>
         </div>
 
-        {/* Cover Image */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Cover Image
@@ -322,8 +312,7 @@ export default function BookForm({ bookId }: BookFormProps) {
                 <button
                   type="button"
                   onClick={removeImage}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors cursor-pointer"
-                >
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors cursor-pointer">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -353,33 +342,28 @@ export default function BookForm({ bookId }: BookFormProps) {
           </div>
         </div>
 
-        {/* Message */}
         {message && (
           <div
             className={`p-4 rounded-lg ${
               message.includes("success")
                 ? "bg-green-50 border border-green-200 text-green-800"
                 : "bg-red-50 border border-red-200 text-red-800"
-            }`}
-          >
+            }`}>
             {message}
           </div>
         )}
 
-        {/* Submit Button */}
         <div className="flex justify-end space-x-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
-          >
+            className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
+            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
             {loading
               ? isEditMode
                 ? "Updating..."

@@ -13,35 +13,29 @@ interface BookDetailProps {
 export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
   const handleAction = async () => {
     if (userBorrowed) {
-      // Return book
       setLoading(true);
       try {
         await returnBook(book.id, 1);
-        setMessage("Book returned successfully");
         router.refresh();
       } catch (error: any) {
-        setMessage(error.message || "Error occurred while returning the book");
+        console.error("Error returning book:", error);
       } finally {
         setLoading(false);
       }
     } else {
-      // Borrow book
       if (book.availableQuantity < 1) {
-        setMessage("Cannot borrow book as it is not available");
         return;
       }
 
       setLoading(true);
       try {
         await borrowBook(book.id, 1);
-        setMessage("Book borrowed successfully");
         router.refresh();
       } catch (error: any) {
-        setMessage(error.message || "Error occurred while borrowing the book");
+        console.error("Error borrowing book:", error);
       } finally {
         setLoading(false);
       }
@@ -57,8 +51,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
       <div className="mb-6">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors hover:cursor-pointer"
-        >
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors hover:cursor-pointer">
           <ArrowLeft className="w-5 h-5" />
           <span>Back to Library</span>
         </button>
@@ -83,8 +76,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
               <div className="mb-4">
                 <button
                   onClick={() => router.push(`/library/${book.id}/edit`)}
-                  className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                >
+                  className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer">
                   <Edit className="w-4 h-4" />
                   Edit Book Details
                 </button>
@@ -95,23 +87,20 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
                   <button
                     onClick={handleAction}
                     disabled={loading}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer"
-                  >
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer">
                     {loading ? "Returning..." : "Return Book"}
                   </button>
                 ) : book.availableQuantity > 0 ? (
                   <button
                     onClick={handleAction}
                     disabled={loading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer"
-                  >
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer">
                     {loading ? "Borrowing..." : "Borrow Book"}
                   </button>
                 ) : (
                   <button
                     onClick={handleReserve}
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer"
-                  >
+                    className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer">
                     All books are borrowed
                   </button>
                 )}
@@ -127,8 +116,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
                       book.availableQuantity > 0
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
-                    }`}
-                  >
+                    }`}>
                     {book.availableQuantity > 0
                       ? "Available for borrowing"
                       : "All books are borrowed"}
@@ -185,12 +173,6 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
                   {book.description}
                 </p>
               </div>
-            </div>
-          )}
-
-          {message && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-blue-800">{message}</p>
             </div>
           )}
         </div>

@@ -81,7 +81,6 @@ export async function deleteBook(id: string) {
 }
 
 export async function borrowBook(id: string, qty: number) {
-  // Validate qty parameter
   if (!qty || qty < 1 || !Number.isInteger(qty)) {
     throw new Error("Quantity must be a positive integer greater than 0");
   }
@@ -100,7 +99,6 @@ export async function borrowBook(id: string, qty: number) {
 }
 
 export async function returnBook(id: string, qty: number) {
-  // Validate qty parameter
   if (!qty || qty < 1 || !Number.isInteger(qty)) {
     throw new Error("Quantity must be a positive integer greater than 0");
   }

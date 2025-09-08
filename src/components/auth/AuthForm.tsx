@@ -36,7 +36,6 @@ export default function AuthForm({
     setValues((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
 
-    // Real-time validation for password confirmation
     if (name === "password" && values.confirmPassword) {
       if (value !== values.confirmPassword) {
         setErrors((prev) => ({
