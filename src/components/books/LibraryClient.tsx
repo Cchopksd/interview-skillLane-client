@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Loader2, BookOpen, Plus } from "lucide-react";
 import { Book } from "@/interfaces/book";
 import BookCard from "./BookCard";
@@ -7,6 +7,7 @@ import SearchFilters from "./SearchFilters";
 import Pagination from "./Pagination";
 import { getBooks } from "@/actions/books";
 import Link from "next/link";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 interface LibraryClientProps {
   initialBooks: Book[];
@@ -28,7 +29,9 @@ export default function LibraryClient({
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const fetchBooks = async (page: number, search: string = searchTerm) => {
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const fetchBooks = useCallback(async (page: number, search: string) => {
     setLoading(true);
     try {
       const result = await getBooks({
@@ -43,20 +46,25 @@ export default function LibraryClient({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handlePageChange = (page: number) => {
-    fetchBooks(page);
-  };
+  useEffect(() => {
+    fetchBooks(1, debouncedSearchTerm);
+  }, [debouncedSearchTerm, fetchBooks]);
 
-  const handleSearch = (term: string) => {
+  const handlePageChange = useCallback(
+    (page: number) => {
+      fetchBooks(page, searchTerm);
+    },
+    [fetchBooks, searchTerm]
+  );
+
+  const handleSearch = useCallback((term: string) => {
     setSearchTerm(term);
-    fetchBooks(1, term);
-  };
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Library Management

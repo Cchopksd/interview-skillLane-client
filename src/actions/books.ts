@@ -87,7 +87,6 @@ export async function borrowBook(id: string, qty: number) {
     method: "POST",
     body: JSON.stringify({ qty }),
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
@@ -101,7 +100,6 @@ export async function returnBook(id: string, qty: number) {
     method: "POST",
     body: JSON.stringify({ qty }),
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });

@@ -1,6 +1,17 @@
 "use client";
 import { useState } from "react";
-import { ArrowLeft, Calendar, User, BookOpen, Star, Clock } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  BookOpen,
+  Hash,
+  Heart,
+  Share2,
+  Star,
+  Eye,
+  Download,
+} from "lucide-react";
 import { Book } from "@/interfaces/book";
 import { borrowBook, returnBook } from "@/actions/books";
 import { useRouter } from "next/navigation";
@@ -26,7 +37,6 @@ export default function BookDetail({ book }: BookDetailProps) {
     try {
       await borrowBook(book.id, borrowQuantity);
       setMessage(`ยืมหนังสือ ${borrowQuantity} เล่มสำเร็จ`);
-      // Refresh the page to update availability
       router.refresh();
     } catch (error: any) {
       setMessage(error.message || "เกิดข้อผิดพลาดในการยืมหนังสือ");
@@ -40,7 +50,6 @@ export default function BookDetail({ book }: BookDetailProps) {
     try {
       await returnBook(book.id, returnQuantity);
       setMessage(`คืนหนังสือ ${returnQuantity} เล่มสำเร็จ`);
-      // Refresh the page to update availability
       router.refresh();
     } catch (error: any) {
       setMessage(error.message || "เกิดข้อผิดพลาดในการคืนหนังสือ");
@@ -49,160 +58,186 @@ export default function BookDetail({ book }: BookDetailProps) {
     }
   };
 
+  const handleReserve = () => {
+    console.log("Reserve book:", book.title);
+  };
+
+  const handleShare = () => {
+    console.log("Share book:", book.title);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Back Button */}
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-6"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        กลับไปยังห้องสมุด
-      </button>
+    <div className="max-w-6xl mx-auto p-6">
+      {/* Header with Back Button */}
+      <div className="mb-6">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors hover:cursor-pointer"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span>กลับไปหน้า Library</span>
+        </button>
+      </div>
 
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="md:flex">
-          {/* Book Cover */}
-          <div className="md:w-1/3">
-            <div className="h-96 md:h-full bg-gray-100 flex items-center justify-center">
-              {book.coverImage ? (
-                <img
-                  src={book.coverImage.url}
-                  alt={book.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <BookOpen className="w-24 h-24 text-gray-400" />
-              )}
-            </div>
-          </div>
-
-          {/* Book Details */}
-          <div className="md:w-2/3 p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {book.title}
-            </h1>
-
-            <div className="space-y-4 mb-6">
-              <div className="flex items-center gap-2">
-                <User className="w-5 h-5 text-gray-500" />
-                <span className="text-lg text-gray-700">
-                  <strong>ผู้เขียน:</strong> {book.author}
-                </span>
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column - Book Cover */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-6">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              {/* Cover Image */}
+              <div className="w-full aspect-[2/3] bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
+                {book.coverImage ? (
+                  <img
+                    src={book.coverImage.url}
+                    alt={book.title}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <BookOpen className="w-16 h-16 text-gray-400" />
+                )}
               </div>
 
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-gray-500" />
-                <span className="text-lg text-gray-700">
-                  <strong>ปีที่พิมพ์:</strong> {book.publicationYear}
-                </span>
+              {/* Quick Actions */}
+              <div className="space-y-3 mb-6">
+                {book.availableQuantity > 0 ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        จำนวนที่ต้องการยืม:
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max={book.availableQuantity}
+                        value={borrowQuantity}
+                        onChange={(e) =>
+                          setBorrowQuantity(Number(e.target.value))
+                        }
+                        className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
+                      />
+                    </div>
+                    <button
+                      onClick={handleBorrow}
+                      disabled={loading}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
+                    >
+                      {loading ? "กำลังยืม..." : "ยืมหนังสือ"}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleReserve}
+                    className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                  >
+                    จองหนังสือ
+                  </button>
+                )}
               </div>
 
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-gray-500" />
-                <span className="text-lg text-gray-700">
-                  <strong>ISBN:</strong> {book.ISBN}
-                </span>
+              {/* Availability Status */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">
+                    สถานะ:
+                  </span>
+                  <span
+                    className={`text-sm px-2 py-1 rounded ${
+                      book.availableQuantity > 0
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {book.availableQuantity > 0 ? "พร้อมให้ยืม" : "ถูกยืมแล้ว"}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">
+                    จำนวนที่มี:
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    {book.availableQuantity}/{book.totalQuantity} เล่ม
+                  </span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-gray-500" />
-                <span className="text-lg text-gray-700">
-                  <strong>จำนวนทั้งหมด:</strong> {book.totalQuantity} เล่ม
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-gray-500" />
-                <span className="text-lg text-gray-700">
-                  <strong>จำนวนที่เหลือ:</strong> {book.availableQuantity} เล่ม
-                </span>
-              </div>
-            </div>
-
-            {book.description && (
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  เรื่องย่อ
+              {/* Return Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                  คืนหนังสือ
                 </h3>
-                <p className="text-gray-700 leading-relaxed">
-                  {book.description}
-                </p>
-              </div>
-            )}
-
-            {/* Availability Status */}
-            <div className="mb-6">
-              <span
-                className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${
-                  book.availableQuantity > 0
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {book.availableQuantity > 0 ? "พร้อมให้ยืม" : "ไม่พร้อมให้ยืม"}
-              </span>
-            </div>
-
-            {/* Borrow/Return Actions */}
-            {book.availableQuantity > 0 && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <label className="text-sm font-medium text-gray-700">
-                    จำนวนที่ต้องการยืม:
-                  </label>
+                <div className="flex items-center gap-2">
                   <input
                     type="number"
                     min="1"
-                    max={book.availableQuantity}
-                    value={borrowQuantity}
-                    onChange={(e) => setBorrowQuantity(Number(e.target.value))}
-                    className="w-20 px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={returnQuantity}
+                    onChange={(e) => setReturnQuantity(Number(e.target.value))}
+                    className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
                   />
                   <button
-                    onClick={handleBorrow}
+                    onClick={handleReturn}
                     disabled={loading}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-sm"
                   >
-                    {loading ? "กำลังยืม..." : "ยืมหนังสือ"}
+                    {loading ? "กำลังคืน..." : "คืนหนังสือ"}
                   </button>
                 </div>
               </div>
-            )}
+            </div>
+          </div>
+        </div>
 
-            {/* Return Section */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                คืนหนังสือ
-              </h3>
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-gray-700">
-                  จำนวนที่ต้องการคืน:
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={returnQuantity}
-                  onChange={(e) => setReturnQuantity(Number(e.target.value))}
-                  className="w-20 px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <button
-                  onClick={handleReturn}
-                  disabled={loading}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? "กำลังคืน..." : "คืนหนังสือ"}
-                </button>
+        {/* Right Column - Book Details */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Title and Basic Info */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
+              {book.title}
+            </h1>
+
+            {/* Author and Publication Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="flex items-center gap-2 text-gray-700">
+                <User className="w-4 h-4 text-gray-400" />
+                <span className="font-medium">ผู้เขียน:</span>
+                <span>{book.author}</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-gray-700">
+                <Calendar className="w-4 h-4 text-gray-400" />
+                <span className="font-medium">ปีที่พิมพ์:</span>
+                <span>{book.publicationYear}</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-gray-700">
+                <Hash className="w-4 h-4 text-gray-400" />
+                <span className="font-medium">ISBN:</span>
+                <span className="font-mono text-sm">{book.ISBN}</span>
               </div>
             </div>
-
-            {/* Message Display */}
-            {message && (
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                <p className="text-blue-800">{message}</p>
-              </div>
-            )}
           </div>
+
+          {/* Description */}
+          {book.description && (
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                รายละเอียดหนังสือ
+              </h2>
+              <div className="prose max-w-none">
+                <p className="text-gray-700 leading-relaxed text-justify">
+                  {book.description}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Message Display */}
+          {message && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-blue-800">{message}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
