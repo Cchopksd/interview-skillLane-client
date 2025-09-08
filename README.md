@@ -7,7 +7,6 @@
 - Library browsing and search
 - Responsive design with Tailwind CSS
 
-
 ## Quick Start
 
 1. **Install dependencies**:
@@ -18,10 +17,19 @@
 
 2. **Set up environment**:
    Create `.env`:
+   ## Environment Variables
 
-   ```env
-   API_URL=http://localhost:8080/api
-   ```
+    ### server run on localhost
+
+    ```bash
+    API_URL=http://localhost:8080/api
+    ```
+
+    ### server run with docker
+
+    ```bash
+    API_URL=http://host.docker.internal:8080/api
+    ```
 
 3. **Start development**:
 
@@ -33,20 +41,17 @@
 
 ## Docker
 
-**Run**:
+The application includes Docker and Docker Compose configuration for easy setup:
+
+### Using Docker Compose (Recommended)
 
 ```bash
+# Start both database and application
 docker-compose up -d
-```
 
-## Scripts
+# Stop all services
+docker-compose down
 
-- `npm run dev` - Development server
-- `npm run build` - Production build
-- `npm run start` - Production server
-
-## Environment Variables
-
-```
-API_URL=http://localhost:8080/api
+# Rebuild and start
+docker-compose up --build -d
 ```
