@@ -1,5 +1,5 @@
 import { getBooks } from "@/actions/books";
-import LibraryClient from "@/components/books/LibraryClient";
+import LibraryClient from "@/components/books/Library";
 
 export default async function LibraryPage() {
   const { books, meta } = await getBooks({ page: 1, limit: 10, search: "" });

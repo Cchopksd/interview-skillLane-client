@@ -62,7 +62,7 @@ export async function updateBook(id: string, book: Book, coverImage: File) {
   formData.append("totalQuantity", book.totalQuantity.toString());
   formData.append("ISBN", book.ISBN);
   formData.append("publicationYear", book.publicationYear.toString());
-  formData.append("coverImage", coverImage);
+  formData.append("cover", coverImage);
   const response = await apiFetch(`/v1/books/${id}`, {
     method: "PUT",
     body: formData,
@@ -81,26 +81,38 @@ export async function deleteBook(id: string) {
 }
 
 export async function borrowBook(id: string, qty: number) {
+  // Validate qty parameter
+  if (!qty || qty < 1 || !Number.isInteger(qty)) {
+    throw new Error("Quantity must be a positive integer greater than 0");
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   const response = await apiFetch(`/v1/books/${id}/borrow`, {
     method: "POST",
-    body: JSON.stringify({ qty }),
+    body: JSON.stringify({ qty: Number(qty) }),
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
   return response.data;
 }
 
 export async function returnBook(id: string, qty: number) {
+  // Validate qty parameter
+  if (!qty || qty < 1 || !Number.isInteger(qty)) {
+    throw new Error("Quantity must be a positive integer greater than 0");
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   const response = await apiFetch(`/v1/books/${id}/return`, {
     method: "POST",
-    body: JSON.stringify({ qty }),
+    body: JSON.stringify({ qty: Number(qty) }),
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
   return response.data;

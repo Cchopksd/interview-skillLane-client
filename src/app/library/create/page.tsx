@@ -1,5 +1,5 @@
-import BookCreateForm from "@/components/books/BookCreateForm";
+import BookForm from "@/components/books/BookForm";
 
 export default function CreateBookPage() {
-  return <BookCreateForm />;
+  return <BookForm />;
 }
