@@ -7,34 +7,24 @@ import { useRouter } from "next/navigation";
 
 interface BookDetailProps {
   book: Book;
+  userBorrowed: Boolean;
 }
 
 export default function BookDetail({ book }: BookDetailProps) {
   const router = useRouter();
-  const [borrowQuantity, setBorrowQuantity] = useState(1);
-  const [returnQuantity, setReturnQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const handleBorrow = async () => {
-    if (
-      !borrowQuantity ||
-      borrowQuantity < 1 ||
-      !Number.isInteger(borrowQuantity)
-    ) {
-      setMessage("จำนวนที่ต้องการยืมต้องเป็นตัวเลขเต็มที่มากกว่า 0");
-      return;
-    }
-
-    if (borrowQuantity > book.availableQuantity) {
-      setMessage("ไม่สามารถยืมได้เกินจำนวนที่มีอยู่");
+    if (book.availableQuantity < 1) {
+      setMessage("ไม่สามารถยืมได้เนื่องจากหนังสือไม่ว่าง");
       return;
     }
 
     setLoading(true);
     try {
-      await borrowBook(book.id, borrowQuantity);
-      setMessage(`ยืมหนังสือ ${borrowQuantity} เล่มสำเร็จ`);
+      await borrowBook(book.id, 1);
+      setMessage("ยืมหนังสือสำเร็จ");
       router.refresh();
     } catch (error: any) {
       setMessage(error.message || "เกิดข้อผิดพลาดในการยืมหนังสือ");
@@ -44,19 +34,10 @@ export default function BookDetail({ book }: BookDetailProps) {
   };
 
   const handleReturn = async () => {
-    if (
-      !returnQuantity ||
-      returnQuantity < 1 ||
-      !Number.isInteger(returnQuantity)
-    ) {
-      setMessage("จำนวนที่ต้องการคืนต้องเป็นตัวเลขเต็มที่มากกว่า 0");
-      return;
-    }
-
     setLoading(true);
     try {
-      await returnBook(book.id, returnQuantity);
-      setMessage(`คืนหนังสือ ${returnQuantity} เล่มสำเร็จ`);
+      await returnBook(book.id, 1);
+      setMessage("คืนหนังสือสำเร็จ");
       router.refresh();
     } catch (error: any) {
       setMessage(error.message || "เกิดข้อผิดพลาดในการคืนหนังสือ");
@@ -109,39 +90,19 @@ export default function BookDetail({ book }: BookDetailProps) {
 
               <div className="space-y-3 mb-6">
                 {book.availableQuantity > 0 ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <label className="text-sm font-medium text-gray-700">
-                        จำนวนที่ต้องการยืม:
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        max={book.availableQuantity}
-                        value={borrowQuantity}
-                        onChange={(e) => {
-                          const value = parseInt(e.target.value) || 1;
-                          setBorrowQuantity(
-                            Math.max(1, Math.min(value, book.availableQuantity))
-                          );
-                        }}
-                        className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
-                      />
-                    </div>
-                    <button
-                      onClick={handleBorrow}
-                      disabled={loading}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
-                    >
-                      {loading ? "กำลังยืม..." : "ยืมหนังสือ"}
-                    </button>
-                  </div>
+                  <button
+                    onClick={handleBorrow}
+                    disabled={loading}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
+                  >
+                    {loading ? "กำลังยืม..." : "ยืมหนังสือ"}
+                  </button>
                 ) : (
                   <button
                     onClick={handleReserve}
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
                   >
-                    จองหนังสือ
+                    หนังสือถูกยืมหมดแล้ว
                   </button>
                 )}
               </div>
@@ -158,7 +119,9 @@ export default function BookDetail({ book }: BookDetailProps) {
                         : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {book.availableQuantity > 0 ? "พร้อมให้ยืม" : "ถูกยืมแล้ว"}
+                    {book.availableQuantity > 0
+                      ? "พร้อมให้ยืม"
+                      : "หนังสือถูกยืมหมดแล้ว"}
                   </span>
                 </div>
 
@@ -176,25 +139,13 @@ export default function BookDetail({ book }: BookDetailProps) {
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">
                   คืนหนังสือ
                 </h3>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min="1"
-                    value={returnQuantity}
-                    onChange={(e) => {
-                      const value = parseInt(e.target.value) || 1;
-                      setReturnQuantity(Math.max(1, value));
-                    }}
-                    className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
-                  />
-                  <button
-                    onClick={handleReturn}
-                    disabled={loading}
-                    className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-sm"
-                  >
-                    {loading ? "กำลังคืน..." : "คืนหนังสือ"}
-                  </button>
-                </div>
+                <button
+                  onClick={handleReturn}
+                  disabled={loading}
+                  className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-sm font-medium"
+                >
+                  {loading ? "กำลังคืน..." : "คืนหนังสือ"}
+                </button>
               </div>
             </div>
           </div>

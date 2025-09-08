@@ -1,4 +1,4 @@
-import { getBookById } from "@/actions/books";
+import { getBookById, getUserBorrowHistoryForBook } from "@/actions/books";
 import BookDetail from "@/components/books/BookDetail";
 import { notFound } from "next/navigation";
 
@@ -10,13 +10,21 @@ interface BookPageProps {
 
 export default async function BookPage({ params }: BookPageProps) {
   try {
-    const book = await getBookById(params.id);
+    const { id } = await params;
+
+    const book = getBookById(id);
+    const userBorrowed = getUserBorrowHistoryForBook(id);
+
+    const [bookData, userBorrowedData] = await Promise.all([
+      book,
+      userBorrowed,
+    ]);
 
     if (!book) {
       notFound();
     }
 
-    return <BookDetail book={book} />;
+    return <BookDetail book={bookData} userBorrowed={userBorrowedData} />;
   } catch (error) {
     console.error("Error fetching book:", error);
     notFound();

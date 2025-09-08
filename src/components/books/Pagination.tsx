@@ -12,7 +12,6 @@ export default function Pagination({
   totalPages,
   onPageChange,
 }: PaginationProps) {
-  console.log("Pagination props:", { currentPage, totalPages });
   const getVisiblePages = () => {
     const delta = 2;
     const range = [];

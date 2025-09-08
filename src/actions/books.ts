@@ -117,3 +117,20 @@ export async function returnBook(id: string, qty: number) {
   });
   return response.data;
 }
+
+export async function getUserBorrowHistoryForBook(bookId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const response = await apiFetch(`/v1/books/${bookId}/my-borrows`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.data) {
+    return true;
+  }
+
+  return false;
+}

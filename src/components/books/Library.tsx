@@ -41,7 +41,6 @@ export default function LibraryClient({
       });
       setBooks(result.books);
       setMeta(result.meta);
-      console.log("Books meta:", result.meta);
     } catch (error) {
       console.error("Error fetching books:", error);
     } finally {
