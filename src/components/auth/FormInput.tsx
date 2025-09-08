@@ -19,7 +19,9 @@ export default function FormInput({
 }: Props) {
   return (
     <div>
-      <label htmlFor={name} className="block text-sm font-medium mb-1">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium mb-1">
         {required && <span className="text-red-500">*</span>}
         {label}
       </label>

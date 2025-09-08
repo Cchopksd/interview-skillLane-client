@@ -29,6 +29,7 @@ export default function AuthForm({
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState("");
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (name: string, value: string) => {
@@ -67,6 +68,7 @@ export default function AuthForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError("");
+    setValidationErrors([]);
 
     if (!validateForm()) {
       return;
@@ -76,15 +78,41 @@ export default function AuthForm({
     try {
       await onSubmit(values);
     } catch (err: any) {
-      setFormError(err?.message || "Something went wrong");
+      const errorMessage = err?.message || "Something went wrong";
+
+      if (errorMessage.includes(",")) {
+        const errors = errorMessage
+          .split(",")
+          .map((error: string) => error.trim());
+        setValidationErrors(errors);
+      } else {
+        setFormError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5">
       {formError && <p className="text-red-600">{formError}</p>}
+
+      {validationErrors.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <ul className="text-red-600 text-sm space-y-1">
+            {validationErrors.map((error, index) => (
+              <li
+                key={index}
+                className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>{error}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {fields.map((f) => (
         <FormInput
@@ -106,8 +134,7 @@ export default function AuthForm({
         type="submit"
         aria-required={fields.some((f) => f.required)}
         disabled={loading}
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 cursor-pointer"
-      >
+        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 cursor-pointer">
         {loading ? "Processing..." : submitLabel}
       </button>
 
