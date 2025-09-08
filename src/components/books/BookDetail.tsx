@@ -10,39 +10,41 @@ interface BookDetailProps {
   userBorrowed: Boolean;
 }
 
-export default function BookDetail({ book }: BookDetailProps) {
+export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleBorrow = async () => {
-    if (book.availableQuantity < 1) {
-      setMessage("ไม่สามารถยืมได้เนื่องจากหนังสือไม่ว่าง");
-      return;
-    }
+  const handleAction = async () => {
+    if (userBorrowed) {
+      // Return book
+      setLoading(true);
+      try {
+        await returnBook(book.id, 1);
+        setMessage("คืนหนังสือสำเร็จ");
+        router.refresh();
+      } catch (error: any) {
+        setMessage(error.message || "เกิดข้อผิดพลาดในการคืนหนังสือ");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Borrow book
+      if (book.availableQuantity < 1) {
+        setMessage("ไม่สามารถยืมได้เนื่องจากหนังสือไม่ว่าง");
+        return;
+      }
 
-    setLoading(true);
-    try {
-      await borrowBook(book.id, 1);
-      setMessage("ยืมหนังสือสำเร็จ");
-      router.refresh();
-    } catch (error: any) {
-      setMessage(error.message || "เกิดข้อผิดพลาดในการยืมหนังสือ");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleReturn = async () => {
-    setLoading(true);
-    try {
-      await returnBook(book.id, 1);
-      setMessage("คืนหนังสือสำเร็จ");
-      router.refresh();
-    } catch (error: any) {
-      setMessage(error.message || "เกิดข้อผิดพลาดในการคืนหนังสือ");
-    } finally {
-      setLoading(false);
+      setLoading(true);
+      try {
+        await borrowBook(book.id, 1);
+        setMessage("ยืมหนังสือสำเร็จ");
+        router.refresh();
+      } catch (error: any) {
+        setMessage(error.message || "เกิดข้อผิดพลาดในการยืมหนังสือ");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -89,9 +91,17 @@ export default function BookDetail({ book }: BookDetailProps) {
               </div>
 
               <div className="space-y-3 mb-6">
-                {book.availableQuantity > 0 ? (
+                {userBorrowed ? (
                   <button
-                    onClick={handleBorrow}
+                    onClick={handleAction}
+                    disabled={loading}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
+                  >
+                    {loading ? "กำลังคืน..." : "คืนหนังสือ"}
+                  </button>
+                ) : book.availableQuantity > 0 ? (
+                  <button
+                    onClick={handleAction}
                     disabled={loading}
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
                   >
@@ -133,19 +143,6 @@ export default function BookDetail({ book }: BookDetailProps) {
                     {book.availableQuantity}/{book.totalQuantity} เล่ม
                   </span>
                 </div>
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                  คืนหนังสือ
-                </h3>
-                <button
-                  onClick={handleReturn}
-                  disabled={loading}
-                  className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-sm font-medium"
-                >
-                  {loading ? "กำลังคืน..." : "คืนหนังสือ"}
-                </button>
               </div>
             </div>
           </div>

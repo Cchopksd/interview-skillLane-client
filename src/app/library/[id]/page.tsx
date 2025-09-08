@@ -20,7 +20,8 @@ export default async function BookPage({ params }: BookPageProps) {
       userBorrowed,
     ]);
 
-    if (!book) {
+
+    if (!bookData) {
       notFound();
     }
 

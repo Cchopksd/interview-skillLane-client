@@ -128,6 +128,8 @@ export async function getUserBorrowHistoryForBook(bookId: string) {
     },
   });
 
+  console.log("chopper", response);
+
   if (response.data) {
     return true;
   }
