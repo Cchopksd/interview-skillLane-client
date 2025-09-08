@@ -69,20 +69,20 @@ export default function LibraryClient({
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Library Management
         </h1>
-        <p className="text-gray-600">จัดการและค้นหาหนังสือในห้องสมุด</p>
+        <p className="text-gray-600">Manage and search books in the library</p>
       </div>
 
       <SearchFilters searchTerm={searchTerm} setSearchTerm={handleSearch} />
 
       <div className="flex justify-between items-center mb-4">
-        <p className="text-gray-600">พบหนังสือทั้งหมด {meta.totalItems} เล่ม</p>
+        <p className="text-gray-600">Found {meta.totalItems} books in total</p>
         <div className="flex items-center gap-2">
           <Link
             href="/library/create"
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
-            เพิ่มหนังสือ
+            Add Book
           </Link>
         </div>
       </div>
@@ -114,7 +114,7 @@ export default function LibraryClient({
       {!loading && books.length === 0 && (
         <div className="text-center py-12">
           <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600">ไม่พบหนังสือที่ตรงกับการค้นหา</p>
+          <p className="text-gray-600">No books found matching your search</p>
         </div>
       )}
     </div>

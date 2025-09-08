@@ -21,27 +21,27 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
       setLoading(true);
       try {
         await returnBook(book.id, 1);
-        setMessage("คืนหนังสือสำเร็จ");
+        setMessage("Book returned successfully");
         router.refresh();
       } catch (error: any) {
-        setMessage(error.message || "เกิดข้อผิดพลาดในการคืนหนังสือ");
+        setMessage(error.message || "Error occurred while returning the book");
       } finally {
         setLoading(false);
       }
     } else {
       // Borrow book
       if (book.availableQuantity < 1) {
-        setMessage("ไม่สามารถยืมได้เนื่องจากหนังสือไม่ว่าง");
+        setMessage("Cannot borrow book as it is not available");
         return;
       }
 
       setLoading(true);
       try {
         await borrowBook(book.id, 1);
-        setMessage("ยืมหนังสือสำเร็จ");
+        setMessage("Book borrowed successfully");
         router.refresh();
       } catch (error: any) {
-        setMessage(error.message || "เกิดข้อผิดพลาดในการยืมหนังสือ");
+        setMessage(error.message || "Error occurred while borrowing the book");
       } finally {
         setLoading(false);
       }
@@ -60,7 +60,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors hover:cursor-pointer"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>กลับไปหน้า Library</span>
+          <span>Back to Library</span>
         </button>
       </div>
 
@@ -97,7 +97,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
                     disabled={loading}
                     className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
                   >
-                    {loading ? "กำลังคืน..." : "คืนหนังสือ"}
+                    {loading ? "Returning..." : "Return Book"}
                   </button>
                 ) : book.availableQuantity > 0 ? (
                   <button
@@ -105,14 +105,14 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
                     disabled={loading}
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50"
                   >
-                    {loading ? "กำลังยืม..." : "ยืมหนังสือ"}
+                    {loading ? "Borrowing..." : "Borrow Book"}
                   </button>
                 ) : (
                   <button
                     onClick={handleReserve}
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
                   >
-                    หนังสือถูกยืมหมดแล้ว
+                    All books are borrowed
                   </button>
                 )}
               </div>
@@ -120,7 +120,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-700">
-                    สถานะ:
+                    Status:
                   </span>
                   <span
                     className={`text-sm px-2 py-1 rounded ${
@@ -130,17 +130,17 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
                     }`}
                   >
                     {book.availableQuantity > 0
-                      ? "พร้อมให้ยืม"
-                      : "หนังสือถูกยืมหมดแล้ว"}
+                      ? "Available for borrowing"
+                      : "All books are borrowed"}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700">
-                    จำนวนที่มี:
+                    Available:
                   </span>
                   <span className="text-sm text-gray-600">
-                    {book.availableQuantity}/{book.totalQuantity} เล่ม
+                    {book.availableQuantity}/{book.totalQuantity} copies
                   </span>
                 </div>
               </div>
@@ -157,13 +157,13 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="flex items-center gap-2 text-gray-700">
                 <User className="w-4 h-4 text-gray-400" />
-                <span className="font-medium">ผู้เขียน:</span>
+                <span className="font-medium">Author:</span>
                 <span>{book.author}</span>
               </div>
 
               <div className="flex items-center gap-2 text-gray-700">
                 <Calendar className="w-4 h-4 text-gray-400" />
-                <span className="font-medium">ปีที่พิมพ์:</span>
+                <span className="font-medium">Publication Year:</span>
                 <span>{book.publicationYear}</span>
               </div>
 
@@ -178,7 +178,7 @@ export default function BookDetail({ book, userBorrowed }: BookDetailProps) {
           {book.description && (
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                รายละเอียดหนังสือ
+                Book Details
               </h2>
               <div className="prose max-w-none">
                 <p className="text-gray-700 leading-relaxed text-justify">
