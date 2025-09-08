@@ -1,10 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, BookOpen, Plus } from "lucide-react";
 import { Book } from "@/interfaces/book";
+import BookCard from "./BookCard";
 import SearchFilters from "./SearchFilters";
 import Pagination from "./Pagination";
 import { getBooks } from "@/actions/books";
+import Link from "next/link";
 
 interface LibraryClientProps {
   initialBooks: Book[];
@@ -66,7 +68,15 @@ export default function LibraryClient({
 
       <div className="flex justify-between items-center mb-4">
         <p className="text-gray-600">พบหนังสือทั้งหมด {meta.totalItems} เล่ม</p>
-        <div className="flex items-center gap-2" />
+        <div className="flex items-center gap-2">
+          <Link
+            href="/library/create"
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            เพิ่มหนังสือ
+          </Link>
+        </div>
       </div>
 
       {loading && (
@@ -79,6 +89,12 @@ export default function LibraryClient({
 
       {!loading && (
         <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {books.map((book) => (
+              <BookCard key={book.id} book={book} />
+            ))}
+          </div>
+
           <Pagination
             currentPage={meta.page}
             totalPages={meta.totalPages}
@@ -88,7 +104,8 @@ export default function LibraryClient({
       )}
 
       {!loading && books.length === 0 && (
-        <div className="text-center flex justify-center py-12">
+        <div className="text-center py-12">
+          <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-600">ไม่พบหนังสือที่ตรงกับการค้นหา</p>
         </div>
       )}

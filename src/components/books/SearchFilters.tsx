@@ -9,7 +9,6 @@ export default function SearchFilters({
   searchTerm,
   setSearchTerm,
 }: SearchFiltersProps) {
-
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
       <div className="flex flex-col lg:flex-row gap-4">

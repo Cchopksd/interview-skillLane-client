@@ -41,7 +41,7 @@ export async function createBook(book: Book, coverImage: File) {
   formData.append("totalQuantity", book.totalQuantity.toString());
   formData.append("ISBN", book.ISBN);
   formData.append("publicationYear", book.publicationYear.toString());
-  formData.append("coverImage", coverImage);
+  formData.append("cover", coverImage);
   const response = await apiFetch("/v1/books", {
     method: "POST",
     body: formData,
